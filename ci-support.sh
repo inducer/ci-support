@@ -434,7 +434,8 @@ build_docs()
 
 maybe_upload_docs()
 {
-  if test -n "${DOC_UPLOAD_KEY}" && test "$CI_DEFAULT_BRANCH" && test "$CI_COMMIT_REF_NAME" = "$CI_DEFAULT_BRANCH"; then
+  if test -n "${DOC_UPLOAD_KEY}" && test "$CI_DEFAULT_BRANCH" && \
+      test "$CI_COMMIT_BRANCH"  && test "$CI_COMMIT_BRANCH" = "$CI_DEFAULT_BRANCH"; then
     cat > doc_upload_ssh_config <<END
 Host doc-upload
    User doc
