@@ -525,8 +525,7 @@ run_pylint()
 
 function setup_asv
 {
-  # See https://github.com/airspeed-velocity/asv/pull/965
-  pip install git+https://github.com/airspeed-velocity/asv@ef016e233cb9a0b19d517135104f49e0a3c380e9#egg=asv
+  pip install "git+https://github.com/airspeed-velocity/asv.git#egg=asv"
 
   if [[ ! -f ~/.asv-machine.json ]]; then
     asv machine --yes
@@ -539,9 +538,9 @@ function clone_results_repo
       echo "PROJECT env var not set"
       exit 1
   fi
-  if [[ ! -z "$CI" ]]; then
+  if [[ -n "$CI" ]]; then
     mkdir -p .asv
-    if [[ "$CI_PROJECT_NAMESPACE" == "inducer" && ! -z "${BENCHMARK_DATA_DEPLOY_KEY}" ]]; then
+    if [[ "$CI_PROJECT_NAMESPACE" == "inducer" && -n "${BENCHMARK_DATA_DEPLOY_KEY}" ]]; then
       echo "$BENCHMARK_DATA_DEPLOY_KEY" > .deploy_key
       chmod 700 .deploy_key
       ssh-keyscan gitlab.tiker.net >> ~/.ssh/known_hosts
@@ -550,7 +549,7 @@ function clone_results_repo
     else
       git clone https://gitlab.tiker.net/isuruf/benchmark-data
     fi
-    ln -s $PWD/benchmark-data/$PROJECT .asv/results
+    ln -s "$PWD/benchmark-data/$PROJECT .asv/results" .
 
     if [[ "$(git branch --show-current)" != "main" ]]; then
       # Fetch the origin/main branch and setup main to track origin/main
@@ -568,7 +567,7 @@ function upload_benchmark_results
 {
   if [[ "$CI_PROJECT_NAMESPACE" == "inducer" ]]; then
     cd benchmark-data
-    git add $PROJECT
+    git add "$PROJECT"
     export GIT_AUTHOR_NAME="Automated Benchmark Bot"
     export GIT_AUTHOR_EMAIL="bot@gitlab.tiker.net"
     export GIT_COMMITTER_NAME=$GIT_AUTHOR_NAME
@@ -587,15 +586,15 @@ function run_asv
       exit 1
   fi
 
-  main_commit=`git rev-parse main`
-  test_commit=`git rev-parse HEAD`
+  main_commit="$(git rev-parse main)"
+  test_commit="$(git rev-parse HEAD)"
 
   # cf. https://github.com/pandas-dev/pandas/pull/25237
   # for reasoning on --launch-method=spawn
-  asv run $main_commit...$main_commit~ --skip-existing --verbose --show-stderr --launch-method=spawn
-  asv run $test_commit...$test_commit~ --skip-existing --verbose --show-stderr --launch-method=spawn
+  asv run "$main_commit...$main_commit~" --skip-existing --verbose --show-stderr --launch-method=spawn
+  asv run "$test_commit...$test_commit~" --skip-existing --verbose --show-stderr --launch-method=spawn
 
-  output=`asv compare $main_commit $test_commit --factor ${ASV_FACTOR:-1} -s`
+  output="$(asv compare "$main_commit" "$test_commit" --factor "${ASV_FACTOR:-1}" -s)"
   echo "$output"
 
   if [[ "$output" = *"worse"* ]]; then
