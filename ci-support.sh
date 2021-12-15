@@ -549,7 +549,7 @@ function clone_results_repo
     else
       git clone https://gitlab.tiker.net/isuruf/benchmark-data
     fi
-    ln -s "$PWD/benchmark-data/$PROJECT .asv/results" .
+    ln -s "$PWD/benchmark-data/$PROJECT" ".asv/results"
 
     if [[ "$(git branch --show-current)" != "main" ]]; then
       # Fetch the origin/main branch and setup main to track origin/main
