@@ -124,8 +124,11 @@ pip_install_project()
     # Filter out any numpy requirements, install first. Otherwise some packages
     # might build against wrong version of numpy.
     # Context: https://github.com/numpy/numpy/issues/20709
-    grep -e "^numpy" "$REQUIREMENTS_TXT" > ci-support-numpy-req.txt
-    with_echo pip install -r ci-support-numpy-req.txt
+    if grep -q "^numpy" "$REQUIREMENTS_TXT"; then
+      echo "Installing numpy first to avoid numpy#20709."
+      grep -e "^numpy" "$REQUIREMENTS_TXT" > ci-support-numpy-req.txt
+      with_echo pip install -r ci-support-numpy-req.txt
+    fi
 
     with_echo pip install -r "$REQUIREMENTS_TXT"
   fi
