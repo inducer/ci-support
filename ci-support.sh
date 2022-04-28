@@ -697,7 +697,10 @@ function install_ispc()
 
 function prepare_downstream_build()
 {
-  local proj_name="$1"
+  # NOTE: parses https://github.com/user/repo.git@branch_name
+  local proj_url="${1%%@*}"
+  local proj_branch=${1#"${proj_url}@"}
+  local proj_name=$(basename "$proj_url" .git)
 
   # This is here because PyOpenCL needs to record a config change so
   # CL headers are found. It git adds siteconf.py.
@@ -707,10 +710,10 @@ function prepare_downstream_build()
     git commit -a -m "Fake commit to record local changes"
   fi
 
-  if [[ "$proj_name" = "mirgecom" ]]; then
-      git clone "https://github.com/illinois-ceesd/$proj_name.git"
+  if [[ "$proj_branch" != "$proj_url" ]]; then
+    git clone "$proj_url" --branch "$proj_branch"
   else
-      git clone "https://github.com/inducer/$proj_name.git"
+    git clone "$proj_url"
   fi
 
   cd "$proj_name"
@@ -747,22 +750,32 @@ function prepare_downstream_build()
 
 function test_downstream()
 {
-  local downstream_proj="$1"
-  local proj_name="$downstream_proj"
+  local downstream_url="$1"
+  local proj_url=""
   local test_examples=0
 
-  if [[ "$downstream_proj" = *_examples ]]; then
-    proj_name="${downstream_proj%_examples}"
+  if [[ "$downstream_url" =~ .*_examples ]]; then
+    downstream_url="${downstream_url%_examples}"
     test_examples=1
   fi
 
-  prepare_downstream_build "$proj_name"
+  if [[ "$downstream_url" =~ https://.* ]]; then
+    proj_url="$downstream_url"
+  else
+    if [[ "$downstream_url" == "mirgecom" ]]; then
+      proj_url="https://github.com/illinois-ceesd/$downstream_url.git"
+    else
+      proj_url="https://github.com/inducer/$downstream_url.git"
+    fi
+  fi
+
+  prepare_downstream_build "$proj_url"
   build_py_project_in_conda_env
 
   if [[ "$test_examples" == "0" ]]; then
     test_py_project
   else
-    if [[ "$proj_name" = "mirgecom" ]]; then
+    if [[ "$proj_url" =~ .*mirgecom.* ]]; then
       examples/run_examples.sh ./examples
     else
       run_examples
