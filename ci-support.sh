@@ -121,7 +121,7 @@ install_miniforge()
 
   if [ "$PLATFORM" == "Windows" ]; then
     echo "start /wait \"\" ${MINIFORGE_INSTALLER} /InstallationType=JustMe /RegisterPython=0 /S /D=$(cygpath -w "${MINIFORGE_INSTALL_DIR}")" > install.bat
-    cmd.exe /c install.bat
+    cmd.exe //c install.bat
   else
     bash "$MINIFORGE_INSTALLER" -b -p "$MINIFORGE_INSTALL_DIR"
   fi
