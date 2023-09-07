@@ -252,7 +252,7 @@ install_conda_deps()
 
   PATH="$CONDA_EXE_DIR:$PATH" with_echo conda update conda --yes --quiet
   PATH="$CONDA_EXE_DIR:$PATH" with_echo conda update --all --yes --quiet
-  PATH="$CONDA_EXE_DIR:$PATH" with_echo conda env create --file "$CONDA_ENVIRONMENT" --name testing --quiet
+  PATH="$CONDA_EXE_DIR:$PATH" with_echo mamba env create --file "$CONDA_ENVIRONMENT" --name testing --quiet
 
   source "$CONDA_EXE_DIR/activate" testing
 
