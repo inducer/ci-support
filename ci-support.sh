@@ -114,7 +114,7 @@ install_miniforge()
     FORGE_INSTALLER_EXT="sh"
   fi
   # Miniforge3 comes with mamba and conda-libmamba-solver installed by default now
-  FORGE_INSTALLER="Miniforge3-$PLATFORM-x86_64.$FORGE_INSTALLER_EXT"
+  FORGE_INSTALLER="Miniforge3-$PLATFORM-$(uname -m).$FORGE_INSTALLER_EXT"
   curl -L -O "https://github.com/conda-forge/miniforge/releases/latest/download/$FORGE_INSTALLER"
 
   rm -Rf "$CONDA_INSTALL_DIR"
