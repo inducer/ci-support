@@ -584,13 +584,7 @@ run_pylint()
     curl -o .pylintrc.yml "${ci_support}/.pylintrc-default.yml"
   fi
 
-  # version bound put in place out of an abundance of cautiousness, no particular reason
-  # 2023-07-27 AK
-  # pytest is being installed since test_*.py modules may import pytest, which
-  # pylint may inspect.
-
-  # astroid 2.5.7 seems to produce spurious pylint failures
-  $PY_EXE -m pip install "pylint<2.18" "astroid!=2.5.7" PyYAML pytest
+  $PY_EXE -m pip install pylint PyYAML pytest
 
   PYLINT_RUNNER_ARGS="--jobs=4 --yaml-rcfile=.pylintrc.yml"
 
