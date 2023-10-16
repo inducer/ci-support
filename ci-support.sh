@@ -339,6 +339,53 @@ test_py_project()
 
   AK_PROJ_NAME="$(get_proj_name)"
 
+  # {{{ configuration for test run
+
+  if [[ $CISUPPORT_PARALLEL_PYTEST == "" || $CISUPPORT_PARALLEL_PYTEST == "xdist" ]]; then
+    # Default: parallel if Not (Gitlab and GPU CI)?
+    PYTEST_PARALLEL_FLAGS=""
+
+    # CI_RUNNER_DESCRIPTION is set by Gitlab
+    if [[ $CI_RUNNER_DESCRIPTION != *-gpu ]]; then
+      if [[ $CISUPPORT_PYTEST_NRUNNERS == "" ]]; then
+        PYTEST_PARALLEL_FLAGS="-n 4"
+      else
+        PYTEST_PARALLEL_FLAGS="-n $CISUPPORT_PYTEST_NRUNNERS"
+      fi
+    fi
+
+  elif [[ $CISUPPORT_PARALLEL_PYTEST == "no" ]]; then
+      PYTEST_PARALLEL_FLAGS=""
+  else
+    echo "unrecognized scheme in CISUPPORT_PARALLEL_PYTEST"
+  fi
+
+  # It... somehow... (?) seems to cause crashes for pytential.
+  # https://gitlab.tiker.net/inducer/pytential/-/issues/146
+  if [[ $CISUPPORT_PYTEST_NO_DOCTEST_MODULES == "" ]]; then
+    DOCTEST_MODULES_FLAG="--doctest-modules"
+  else
+    DOCTEST_MODULES_FLAG=""
+  fi
+
+  CONDA_JEMALLOC="$CONDA_PREFIX/lib/libjemalloc.so.2"
+  if test "$CONDA_PREFIX" != "" && test -f "$CONDA_JEMALLOC"; then
+    echo "*** running with $CONDA_JEMALLOC in LD_PRELOAD"
+    CI_SUPPORT_LD_PRELOAD="$CONDA_JEMALLOC"
+  else
+    CI_SUPPORT_LD_PRELOAD="$LD_PRELOAD"
+  fi
+
+  # Core dumps? Sure, take them.
+  ulimit -c unlimited || true
+
+  if test "$PLATFORM" != "Windows"; then
+    # 10 GiB should be enough for just about anyone :)
+    ulimit -m "$(python -c 'print(1024*1024*10)')" || true
+  fi
+
+  # }}}
+
   TESTABLES=""
   if [ -d test ]; then
     cd test
@@ -364,60 +411,29 @@ test_py_project()
         TESTABLES="$TESTABLES ${DOCTEST_MODULES[*]}"
       fi
     fi
+  elif [ -d $AK_PROJ_NAME/test ]; then
+    TESTABLES="$AK_PROJ_NAME $TESTABLES"
 
-    if [[ -n "$TESTABLES" ]]; then
-      # Core dumps? Sure, take them.
-      ulimit -c unlimited || true
+    if [ -z "$NO_DOCTESTS" ]; then
+      RST_FILES=(doc/*.rst)
 
-      if test "$PLATFORM" != "Windows"; then
-        # 10 GiB should be enough for just about anyone :)
-        ulimit -m "$(python -c 'print(1024*1024*10)')" || true
-      fi
-
-      if [[ $CISUPPORT_PARALLEL_PYTEST == "" || $CISUPPORT_PARALLEL_PYTEST == "xdist" ]]; then
-        # Default: parallel if Not (Gitlab and GPU CI)?
-        PYTEST_PARALLEL_FLAGS=""
-
-        # CI_RUNNER_DESCRIPTION is set by Gitlab
-        if [[ $CI_RUNNER_DESCRIPTION != *-gpu ]]; then
-          if [[ $CISUPPORT_PYTEST_NRUNNERS == "" ]]; then
-            PYTEST_PARALLEL_FLAGS="-n 4"
-          else
-            PYTEST_PARALLEL_FLAGS="-n $CISUPPORT_PYTEST_NRUNNERS"
+      for f in "${RST_FILES[@]}"; do
+        if [ -e "$f" ]; then
+          if ! grep -q no-doctest "$f"; then
+            TESTABLES="$TESTABLES $f"
           fi
         fi
-
-      elif [[ $CISUPPORT_PARALLEL_PYTEST == "no" ]]; then
-          PYTEST_PARALLEL_FLAGS=""
-      else
-        echo "unrecognized scheme in CISUPPORT_PARALLEL_PYTEST"
-      fi
-
-      # It... somehow... (?) seems to cause crashes for pytential.
-      # https://gitlab.tiker.net/inducer/pytential/-/issues/146
-      if [[ $CISUPPORT_PYTEST_NO_DOCTEST_MODULES == "" ]]; then
-        DOCTEST_MODULES_FLAG="--doctest-modules"
-      else
-        DOCTEST_MODULES_FLAG=""
-      fi
-
-      CONDA_JEMALLOC="$CONDA_PREFIX/lib/libjemalloc.so.2"
-      if test "$CONDA_PREFIX" != "" && test -f "$CONDA_JEMALLOC"; then
-        echo "*** running with $CONDA_JEMALLOC in LD_PRELOAD"
-        CI_SUPPORT_LD_PRELOAD="$CONDA_JEMALLOC"
-      else
-        CI_SUPPORT_LD_PRELOAD="$LD_PRELOAD"
-      fi
-
-      ( LD_PRELOAD="$CI_SUPPORT_LD_PRELOAD" with_echo "${PY_EXE}" -m pytest \
-          --durations=10 \
-          --tb=native  \
-          --junitxml=pytest.xml \
-          $DOCTEST_MODULES_FLAG \
-          -rxsw \
-          $PYTEST_FLAGS $PYTEST_PARALLEL_FLAGS $TESTABLES )
+      done
     fi
   fi
+
+  ( LD_PRELOAD="$CI_SUPPORT_LD_PRELOAD" with_echo "${PY_EXE}" -m pytest \
+      --durations=10 \
+      --tb=native  \
+      --junitxml=pytest.xml \
+      $DOCTEST_MODULES_FLAG \
+      -rxsw \
+      $PYTEST_FLAGS $PYTEST_PARALLEL_FLAGS $TESTABLES )
 }
 
 # }}}
