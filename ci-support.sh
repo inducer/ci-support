@@ -432,7 +432,7 @@ test_py_project()
       --tb=native  \
       --junitxml=pytest.xml \
       $DOCTEST_MODULES_FLAG \
-      -rxsw \
+      -rxsw -o xfail_strict=True \
       $PYTEST_FLAGS $PYTEST_PARALLEL_FLAGS $TESTABLES )
 }
 
