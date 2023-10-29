@@ -167,13 +167,6 @@ pip_install_project()
     with_echo source .ci-build-configure.sh
   fi
 
-  # Append --editable to PROJECT_INSTALL_FLAGS, if not there already.
-  # See: https://gitlab.tiker.net/inducer/ci-support/-/issues/3
-  # Can be removed after https://github.com/pypa/pip/issues/2195 is resolved.
-  if [[ ! $PROJECT_INSTALL_FLAGS =~ (^|[[:space:]]*)(--editable|-e)[[:space:]]*$ ]]; then
-      PROJECT_INSTALL_FLAGS="$PROJECT_INSTALL_FLAGS --editable"
-  fi
-
   with_echo "$PY_EXE" -m pip install $PROJECT_INSTALL_FLAGS .
 }
 
