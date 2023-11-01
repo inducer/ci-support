@@ -379,15 +379,10 @@ test_py_project()
 
   # }}}
 
-  local CHANGE_TO_DIR
-
+  TESTABLES=""
   if [ -d test ]; then
-    # a no-op
-    CHANGE_TO_DIR="."
-
     cd test
 
-    TESTABLES=""
     if ! [ -f .not-actually-ci-tests ]; then
       TESTABLES="$TESTABLES ."
     fi
@@ -410,12 +405,7 @@ test_py_project()
       fi
     fi
   elif [ -d $AK_PROJ_NAME/test ]; then
-    # If we stay in the package root, then 'import packagename' is ambiguous,
-    # and pytest gets angry with ImportPathMismatchError.
-    mkdir test-run-dir
-    CHANGE_TO_DIR="test-run-dir"
-
-    TESTABLES="$AK_PROJ_NAME"
+    TESTABLES="$AK_PROJ_NAME $TESTABLES"
 
     if [ -z "$NO_DOCTESTS" ]; then
       RST_FILES=(doc/*.rst)
@@ -423,15 +413,14 @@ test_py_project()
       for f in "${RST_FILES[@]}"; do
         if [ -e "$f" ]; then
           if ! grep -q no-doctest "$f"; then
-            TESTABLES="$TESTABLES ../$f"
+            TESTABLES="$TESTABLES $f"
           fi
         fi
       done
     fi
   fi
 
-  ( cd "$CHANGE_TO_DIR" && \
-    LD_PRELOAD="$CI_SUPPORT_LD_PRELOAD" with_echo "${PY_EXE}" -m pytest \
+  ( LD_PRELOAD="$CI_SUPPORT_LD_PRELOAD" with_echo "${PY_EXE}" -m pytest \
       --durations=10 \
       --tb=native  \
       --junitxml=pytest.xml \
