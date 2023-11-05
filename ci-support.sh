@@ -170,8 +170,9 @@ pip_install_project()
   # Append --editable to PROJECT_INSTALL_FLAGS, if not there already and if not
   # disabled.
   if ! test -f setup.cfg || ! grep -q disable-editable-pip-install setup.cfg; then
-  if [[ ! $PROJECT_INSTALL_FLAGS =~ (^|[[:space:]]*)(--editable|-e)[[:space:]]*$ ]]; then
-      PROJECT_INSTALL_FLAGS="$PROJECT_INSTALL_FLAGS --editable"
+    if [[ ! $PROJECT_INSTALL_FLAGS =~ (^|[[:space:]]*)(--editable|-e)[[:space:]]*$ ]]; then
+        PROJECT_INSTALL_FLAGS="$PROJECT_INSTALL_FLAGS --editable"
+    fi
   fi
 
   with_echo "$PY_EXE" -m pip install $PROJECT_INSTALL_FLAGS .
