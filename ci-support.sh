@@ -267,7 +267,10 @@ install_conda_deps()
   # https://github.com/pypa/pip/issues/5345#issuecomment-386443351
   export XDG_CACHE_HOME=$HOME/.cache/$CI_RUNNER_ID
 
-  with_echo conda install --quiet --yes pip
+  # '|| true' to avoid failing if pip is already installed.
+  # (need observed with boxtree 2023-03-03 -AK)
+  with_echo conda install --quiet --yes pip || true
+
   with_echo conda list
 
   # Placeholder until github.com/conda-forge/qt-feedstock/issues/208 is fixed
