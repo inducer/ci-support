@@ -274,7 +274,9 @@ install_conda_deps()
   # FIXME: workaround until we address
   # https://github.com/conda-forge/pocl-feedstock/pull/96
   if [ $PLATFORM = "MacOSX" ]; then
-    with_echo conda install ld64=609
+    if conda list | grep -q ld64; then
+      with_echo conda install --yes ld64=609
+    fi
   fi
 
   with_echo conda list
