@@ -540,6 +540,7 @@ Host doc-upload
    IdentityFile doc_upload_key
    IdentitiesOnly yes
    Hostname marten.tiker.net
+   Port 2222
    StrictHostKeyChecking false
 END
 
