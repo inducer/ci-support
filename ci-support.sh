@@ -14,6 +14,23 @@ else
   PLATFORM=Windows
 fi
 
+
+if grep -sq 'docker\|lxc' /proc/1/cgroup; then
+  CI_SUPPORT_IS_DOCKER=1
+else
+  CI_SUPPORT_IS_DOCKER=0
+fi
+if [[ $CI_SUPPORT_IS_DOCKER = 1 ]] || [[ $GITHUB_ACTIONS == "true" ]]; then
+  CI_SUPPORT_IS_CONTAINER=1
+else
+  CI_SUPPORT_IS_CONTAINER=0
+fi
+
+if [[ $CI_SUPPORT_IS_CONTAINER = 0 ]] && [[ $CI == "true" ]]; then
+  # clean up the mess that someone may have made
+  rm -f "$HOME/.aksetup-defaults.py"
+fi
+
 if [ "$PY_EXE" == "" ]; then
   if [ "$py_version" == "" ]; then
     if [ "$PLATFORM" = "Windows" ]; then
@@ -298,7 +315,8 @@ install_conda_deps()
     else
       LIBRARY_PREFIX="$CONDA_PREFIX"
     fi
-    cat >> ~/.aksetup-defaults.py <<EOF
+    if [[ $CI_SUPPORT_IS_CONTAINER == 1 ]]; then
+      cat >> ~/.aksetup-defaults.py <<EOF
 CL_INC_DIR = ["$LIBRARY_PREFIX/include"]
 CL_LIB_DIR = ["$LIBRARY_PREFIX/lib"]
 
@@ -306,6 +324,7 @@ CL_LIB_DIR = ["$LIBRARY_PREFIX/lib"]
 # ICD loader on macOS.
 CL_LIBNAME = ["OpenCL"]
 EOF
+    fi
   fi
 }
 
