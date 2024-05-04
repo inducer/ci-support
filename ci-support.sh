@@ -159,8 +159,10 @@ pip_install_project()
     with_echo pip install -r "$REQUIREMENTS_TXT"
   fi
 
-  if test -f .conda-ci-build-configure.sh; then
-    with_echo source .conda-ci-build-configure.sh
+  if [[ "$CONDA_PREFIX" != "" ]]; then
+    if test -f .conda-ci-build-configure.sh; then
+      with_echo source .conda-ci-build-configure.sh
+    fi
   fi
 
   if test -f .ci-build-configure.sh; then
