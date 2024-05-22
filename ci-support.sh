@@ -560,7 +560,7 @@ Host doc-upload
    User doc
    IdentityFile doc_upload_key
    IdentitiesOnly yes
-   Hostname marten.tiker.net
+   Hostname documen.tician.de
    Port 2222
    StrictHostKeyChecking false
 END
