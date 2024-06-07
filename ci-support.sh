@@ -921,4 +921,21 @@ function test_downstream()
 # }}}
 
 
+# {{{ gitlab mirror
+
+function mirror_github_to_gitlab()
+{
+  mkdir ~/.ssh && echo -e "Host gitlab.tiker.net\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
+  eval $(ssh-agent) && echo "$GITLAB_AUTOPUSH_KEY" | ssh-add -
+  git fetch --unshallow
+  TGT_BRANCH="${GITHUB_REF#refs/heads/}"
+  echo "pushing to $TGT_BRANCH..."
+  TGT_REPO="git@gitlab.tiker.net:inducer/$(get_proj_name).git"
+  git push "$TGT_REPO" "$TGT_BRANCH"
+  git push "$TGT_REPO" --tags
+}
+
+# }}}
+
+
 # vim: foldmethod=marker:sw=2
