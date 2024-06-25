@@ -579,10 +579,30 @@ END
 
 # {{{ flake8
 
+is_flake8_config_in_pyproject()
+{
+  grep -m 1 -Fxqs "[tool.flake8]" pyproject.toml
+}
+
+get_flake8_config_file()
+{
+  if is_flake8_config_in_pyproject; then
+    echo "pyproject.toml"
+  else
+    echo "setup.cfg"
+  fi
+}
+
 install_and_run_flake8()
 {
   FLAKE8_PACKAGES=(flake8 pep8-naming flake8-comprehensions)
-  if grep -q quotes setup.cfg; then
+
+  if is_flake8_config_in_pyproject; then
+    true
+    FLAKE8_PACKAGES+=(flake8-pyproject)
+  fi
+
+  if grep -q quotes "$(get_flake8_config_file)"; then
     true
     FLAKE8_PACKAGES+=(flake8-quotes)
   else
@@ -593,7 +613,7 @@ install_and_run_flake8()
     echo "https://github.com/illinois-ceesd/mirgecom/blob/45457596cac2eeb4a0e38bf6845fe4b7c323f6f5/setup.cfg#L5-L7"
     echo "-----------------------------------------------------------------"
   fi
-  if grep -q isort setup.cfg; then
+  if grep -q isort "$(get_flake8_config_file)"; then
     true
     FLAKE8_PACKAGES+=(flake8-isort)
   else
@@ -605,7 +625,7 @@ install_and_run_flake8()
     echo "-----------------------------------------------------------------"
   fi
 
-  if grep -q enable-flake8-bugbear setup.cfg; then
+  if grep -q enable-flake8-bugbear $(get_flake8_config_file); then
     FLAKE8_PACKAGES+=(flake8-bugbear)
   else
     echo "-----------------------------------------------------------------"
