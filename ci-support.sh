@@ -67,6 +67,76 @@ rewrite_pyopencl_test()
 
 # {{{ utilities
 
+function tomlsh {
+  python3 - "$@" <<EOF
+#! /usr/bin/env python3
+
+import argparse
+import sys
+import toml
+
+
+def resolve_dotted_name(data, dotted_name):
+    components = dotted_name.split(".")
+    for comp in components:
+        data = data.get(comp)
+        if data is None:
+            return data
+
+    return data
+
+
+def has_key(data, args):
+    return 0 if resolve_dotted_name(data, args.dotted_name) is not None else 1
+
+
+def get(data, args):
+    data = resolve_dotted_name(data, args.dotted_name)
+    if data:
+        print(data)
+    return 0
+
+
+def get_list(data, args):
+    for item in resolve_dotted_name(data, args.dotted_name):
+        print(item)
+    return 0
+
+
+def main():
+    parser = argparse.ArgumentParser(description="TOML wrangling for shell scripts")
+    parser.add_argument("filename", default="FILE.TOML")
+    subp = parser.add_subparsers()
+
+    parser_has_key = subp.add_parser("has-key")
+    parser_has_key.add_argument("dotted_name", default="DOTTED.NAME")
+
+    parser_has_key.set_defaults(func=has_key)
+
+    parser_get = subp.add_parser("get")
+    parser_get.add_argument("dotted_name", default="DOTTED.NAME")
+    parser_get.set_defaults(func=get)
+
+    parser_get_list = subp.add_parser("get-list")
+    parser_get_list .add_argument("dotted_name", default="DOTTED.NAME")
+    parser_get_list .set_defaults(func=get_list)
+
+    args = parser.parse_args()
+
+    if not hasattr(args, "func"):
+        parser.print_usage()
+        sys.exit(1)
+
+    data = toml.load(args.filename)
+
+    sys.exit(args.func(data, args))
+
+
+if __name__ == "__main__":
+    main()
+EOF
+}
+
 function with_echo()
 {
   echo "+++" "$@"
