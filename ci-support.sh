@@ -194,6 +194,12 @@ pip_install_project()
     fi
   fi
 
+  if ! test -f pyproject.toml || ! grep -q disable-editable-pip-install pyproject.toml; then
+    if [[ ! $PROJECT_INSTALL_FLAGS =~ (^|[[:space:]]*)(--editable|-e)[[:space:]]*$ ]]; then
+        PROJECT_INSTALL_FLAGS="$PROJECT_INSTALL_FLAGS --editable"
+    fi
+  fi
+
   with_echo "$PY_EXE" -m pip install $PROJECT_INSTALL_FLAGS .
 }
 
@@ -609,7 +615,7 @@ install_and_run_flake8()
     echo "-----------------------------------------------------------------"
     echo "Consider enabling quote checking for this package by configuring"
     echo "https://github.com/zheller/flake8-quotes"
-    echo "in setup.cfg. Follow this example:"
+    echo "in $(get_flake8_config_file). Follow this example:"
     echo "https://github.com/illinois-ceesd/mirgecom/blob/45457596cac2eeb4a0e38bf6845fe4b7c323f6f5/setup.cfg#L5-L7"
     echo "-----------------------------------------------------------------"
   fi
@@ -620,7 +626,7 @@ install_and_run_flake8()
     echo "-----------------------------------------------------------------"
     echo "Consider enabling import order for this package by configuring"
     echo "https://github.com/gforcada/flake8-isort"
-    echo "in setup.cfg. Simply add a line"
+    echo "in $(get_flake8_config_file). Simply add a line"
     echo "# enable-isort"
     echo "-----------------------------------------------------------------"
   fi
@@ -631,7 +637,7 @@ install_and_run_flake8()
     echo "-----------------------------------------------------------------"
     echo "Consider enabling quote checking for this package by configuring"
     echo "https://github.com/PyCQA/flake8-bugbear"
-    echo "in setup.cfg. Simply add a line"
+    echo "in $(get_flake8_config_file). Simply add a line"
     echo "# enable-flake8-bugbear"
     echo "-----------------------------------------------------------------"
   fi
