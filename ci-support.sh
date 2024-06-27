@@ -130,7 +130,7 @@ def main():
         parser.print_usage()
         sys.exit(1)
 
-    with open(args.filename, encoding="utf-8") as toml:
+    with open(args.filename, "rb") as toml:
         data = tomllib.load(toml)
 
     sys.exit(args.func(data, args))
