@@ -27,6 +27,12 @@ RUN apt-get clean
 
 RUN echo "runner ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/allow-runner-sudo
 RUN echo 'APT::Get::Assume-Yes "1";' > /etc/apt/apt.conf.d/75assume-yes
-RUN echo 'export PATH="$PATH:$HOME/.local/bin"' >> /home/runner/.bashrc
+
+# We get run with bash --login. That reads .bash_profile, but not .bashrc.
+RUN echo 'export PATH="$PATH:$HOME/.local/bin"' >> /home/runner/.bash_profile
 
 USER runner
+
+ADD entrypoint.sh /
+
+ENTRYPOINT ["/bin/bash", "/entrypoint.sh"]
