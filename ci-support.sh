@@ -73,8 +73,11 @@ function tomlsh {
 
 import argparse
 import sys
-import toml
 
+try:
+    import tomllib
+except ImportError:
+    import toml as tomllib
 
 def resolve_dotted_name(data, dotted_name):
     components = dotted_name.split(".")
@@ -127,7 +130,8 @@ def main():
         parser.print_usage()
         sys.exit(1)
 
-    data = toml.load(args.filename)
+    with open(args.filename, encoding="utf-8") as toml:
+        data = tomllib.load(toml)
 
     sys.exit(args.func(data, args))
 
@@ -187,7 +191,7 @@ create_and_set_up_virtualenv()
 
 
   $PY_EXE -m pip install --upgrade pip
-  $PY_EXE -m pip install setuptools wheel
+  $PY_EXE -m pip install setuptools wheel toml
 }
 
 
