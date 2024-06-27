@@ -7,7 +7,7 @@ for i in "$@"; do
   cmd+=("$(echo "$i"| sed "/exec/s/bash/bash --login/g")")
 done
 echo "Using rewritten shell invocation received from executor."
-echo "${cmd[@]}"
+echo "See https://github.com/inducer/ci-support/blob/main/docker/entrypoint.sh for details."
 "${cmd[@]}"
 retcode="$?"
 echo "return code from command: $retcode"
