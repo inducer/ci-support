@@ -8,7 +8,7 @@ RUN apt-get -y upgrade
 
 # -o APT::Install-Recommends=0
 RUN apt-get -y -o APT::Install-Suggests=0 install \
-  python-is-python3 python3-dev python3-venv python3-pip \
+  python-is-python3 python3-dev python3-venv pipx \
   libblas-dev liblapack-dev libopenblas-dev \
   build-essential \
   git \
@@ -27,5 +27,6 @@ RUN apt-get clean
 
 RUN echo "runner ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/allow-runner-sudo
 RUN echo 'APT::Get::Assume-Yes "1";' > /etc/apt/apt.conf.d/75assume-yes
+RUN echo 'export PATH="$PATH:$HOME/.local/bin"' >> /home/runner/.bashrc
 
 USER runner
