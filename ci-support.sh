@@ -538,7 +538,6 @@ test_py_project()
 
   ( LD_PRELOAD="$CI_SUPPORT_LD_PRELOAD" with_echo "${PY_EXE}" -m pytest \
       --durations=10 \
-      --tb=native  \
       --junitxml=pytest.xml \
       $DOCTEST_MODULES_FLAG \
       -rxsw -o xfail_strict=True \
