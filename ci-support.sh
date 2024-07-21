@@ -569,8 +569,8 @@ run_examples()
       echo "-----------------------------------------------------------------------"
       echo "RUNNING $i"
       echo "-----------------------------------------------------------------------"
-      dn=$(dirname "$i")
-      bn=$(basename "$i")
+      cwd=$(dirname "$i")
+      example_script=$(basename "$i")
 
       CONDA_JEMALLOC="$CONDA_PREFIX/lib/libjemalloc.so.2"
       if test "$CONDA_PREFIX" != "" && test -f "$CONDA_JEMALLOC"; then
@@ -580,14 +580,19 @@ run_examples()
         CI_SUPPORT_LD_PRELOAD="$LD_PRELOAD"
       fi
 
-      if [[ $bn == *mpi* ]]; then
+      if [[ $example_script == *mpi* ]]; then
         # FIXME: This command line is OpenMPI-specific.)
-        (cd "$dn"; time LD_PRELOAD="$CI_SUPPORT_LD_PRELOAD" \
+        (cd "$cwd"; time \
+          LD_PRELOAD="$CI_SUPPORT_LD_PRELOAD" \
+          PYTHONWARNINGS=default \
           mpiexec -np ${CI_SUPPORT_MPI_RANK_COUNT:-3} --oversubscribe \
-          -x LD_PRELOAD -x PYOPENCL_TEST \
-          ${PY_EXE} -m mpi4py "$bn")
+            -x LD_PRELOAD -x PYOPENCL_TEST -x PYTHONWARNINGS \
+            ${PY_EXE} -m mpi4py "$example_script")
       else
-        (cd "$dn"; time LD_PRELOAD="$CI_SUPPORT_LD_PRELOAD" ${PY_EXE} "$bn")
+        (cd "$cwd"; time \
+          LD_PRELOAD="$CI_SUPPORT_LD_PRELOAD" \
+          PYTHONWARNINGS=default \
+          ${PY_EXE} "$example_script")
       fi
     done
   fi
