@@ -270,7 +270,7 @@ pip_install_project()
     fi
   fi
 
-  with_echo "$PY_EXE" -m pip install $PROJECT_INSTALL_FLAGS .
+  with_echo "$PY_EXE" -m pip install -v $PROJECT_INSTALL_FLAGS .
 }
 
 
