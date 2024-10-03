@@ -58,7 +58,7 @@ fi
 
 rewrite_pyopencl_test()
 {
-  if python -c 'import pyopencl as cl; import pyopencl.characterize as c; v = [c.get_pocl_version(p) for p in cl.get_platforms()]; v, = [i for i in v if i];  import sys; sys.exit(not v >= (4,0))'; then
+  if (cd ..; $PY_EXE -c 'import pyopencl as cl; import pyopencl.characterize as c; v = [c.get_pocl_version(p) for p in cl.get_platforms()]; v, = [i for i in v if i];  import sys; sys.exit(not v >= (4,0))'); then
     export PYOPENCL_TEST
     PYOPENCL_TEST="$(echo "${PYOPENCL_TEST}" | sed s/pthread/cpu/ )"
   fi
