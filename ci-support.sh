@@ -231,6 +231,8 @@ handle_extra_install()
 
 pip_install_project()
 {
+  with_echo pip install hatchling
+
   handle_extra_install
 
   if test "$REQUIREMENTS_TXT" == ""; then
