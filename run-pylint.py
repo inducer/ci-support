@@ -65,12 +65,6 @@ def main():
     """Process command line args and run Pylint."""
     args = []
 
-    if sys.version_info >= (3, 13):
-        print("*** skipping pylint run because we're on Python 3.13")
-        print("*** context: https://github.com/pylint-dev/pylint/issues/10112")
-
-        return
-
     for arg in sys.argv[1:]:
         if arg.startswith(YAML_RCFILE_PREFIX):
             config_path = arg[len(YAML_RCFILE_PREFIX):]
@@ -78,6 +72,12 @@ def main():
                 args.extend(generate_args_from_yaml(config_file))
         else:
             args.append(arg)
+
+    if sys.version_info >= (3, 13):
+        print("::warning:: modifying pylint run because we're on Python 3.13")
+        print("::warning:: context: https://github.com/pylint-dev/pylint/issues/10112")
+
+        args.append("--disable=import-error")
 
     logger.info(" ".join(shlex.quote(arg) for arg in ["pylint"] + args))
     pylint.lint.Run(args)
