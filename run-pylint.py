@@ -65,6 +65,10 @@ def main():
     """Process command line args and run Pylint."""
     args = []
 
+    if sys.version_info >= (3, 13):
+        # https://github.com/pylint-dev/pylint/issues/10112
+        return
+
     for arg in sys.argv[1:]:
         if arg.startswith(YAML_RCFILE_PREFIX):
             config_path = arg[len(YAML_RCFILE_PREFIX):]
