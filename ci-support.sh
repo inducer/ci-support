@@ -435,7 +435,7 @@ test_py_project()
 {
   rewrite_pyopencl_test
 
-  if [[ $PYOPENCL_TEST = *nvi* ]]; then
+  if [[ $PYOPENCL_TEST = *nvi* ]] || [[ $PYOPENCL_TEST = *titan* ]]; then
     echo "Nvidia GPUs currently unavailable, not running tests"
     return
   fi
@@ -560,7 +560,7 @@ run_examples()
 {
   rewrite_pyopencl_test
 
-  if [[ $PYOPENCL_TEST = *nvi* ]]; then
+  if [[ $PYOPENCL_TEST = *nvi* ]] || [[ $PYOPENCL_TEST = *titan* ]]; then
     echo "Nvidia GPUs currently unavailable, not running tests"
     return
   fi
