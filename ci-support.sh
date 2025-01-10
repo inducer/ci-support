@@ -435,6 +435,11 @@ test_py_project()
 {
   rewrite_pyopencl_test
 
+  if [[ $PYOPENCL_TEST = *nvi* ]]; then
+    echo "Nvidia GPUs currently unavailable, not running tests"
+    return
+  fi
+
   $PY_EXE -m pip install pytest pytest-github-actions-annotate-failures
 
   # Needed for https://github.com/utgwkk/pytest-github-actions-annotate-failures
@@ -554,6 +559,11 @@ test_py_project()
 run_examples()
 {
   rewrite_pyopencl_test
+
+  if [[ $PYOPENCL_TEST = *nvi* ]]; then
+    echo "Nvidia GPUs currently unavailable, not running tests"
+    return
+  fi
 
   if test "$1" == "--no-require-main"; then
     MAIN_FILTER=()
