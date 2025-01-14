@@ -21,7 +21,8 @@ RUN apt-get -y -o APT::Install-Suggests=0 install \
   locales-all \
   rsync \
   libgl1 \
-  cargo
+  cargo \
+  golang
 
 RUN useradd -G sudo -m runner
 RUN apt-get clean
