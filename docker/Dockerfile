@@ -20,7 +20,8 @@ RUN apt-get -y -o APT::Install-Suggests=0 install \
   libhwloc-dev \
   locales-all \
   rsync \
-  libgl1
+  libgl1 \
+  cargo
 
 RUN useradd -G sudo -m runner
 RUN apt-get clean
