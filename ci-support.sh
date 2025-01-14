@@ -486,11 +486,11 @@ test_py_project()
 
   CONDA_JEMALLOC="$CONDA_PREFIX/lib/libjemalloc.so.2"
   if test "$CONDA_PREFIX" != "" && test -f "$CONDA_JEMALLOC"; then
-    echo "*** running with $CONDA_JEMALLOC in LD_PRELOAD"
-    CI_SUPPORT_LD_PRELOAD="$CONDA_JEMALLOC"
-  else
-    CI_SUPPORT_LD_PRELOAD="$LD_PRELOAD"
+    # echo "*** running with $CONDA_JEMALLOC in LD_PRELOAD"
+    # CI_SUPPORT_LD_PRELOAD="$CONDA_JEMALLOC"
+    echo "*** $CONDA_JEMALLOC installed, skipping because of crashes observed in January 2025"
   fi
+  CI_SUPPORT_LD_PRELOAD="$LD_PRELOAD"
 
   # Core dumps? Sure, take them.
   ulimit -c unlimited || true
