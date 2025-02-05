@@ -1,5 +1,7 @@
 #! /bin/bash
 
+set -eo pipefail
+
 git clone https://gitlab.tiker.net/inducer/hedgedoc-cli.git hedgedoc-cli
 CLICMD=$(pwd)/hedgedoc-cli/bin/codimd
 
