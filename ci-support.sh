@@ -293,7 +293,6 @@ pip_install_project()
 
 pip_install_project_inner()
 {
-  begin_output_group "pip install"
   with_echo pip install hatchling
 
   handle_extra_install
