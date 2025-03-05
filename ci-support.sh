@@ -63,7 +63,7 @@ begin_output_group()
   if [[ $GITHUB_ACTIONS == "true" ]] && [[ $GROUP_NEST_LEVEL == 0 ]]; then
     echo "::group::$1"
   else
-    echo "//------------------------------------------------------------"
+    echo '//------------------------------------------------------------'
     echo "BEGIN $1"
   fi
   GROUP_NEST_LEVEL=$((GROUP_NEST_LEVEL + 1))
@@ -77,7 +77,7 @@ end_output_group()
     echo "::endgroup::$1"
   else
     echo "END $1"
-    echo "\\------------------------------------------------------------"
+    echo '\\------------------------------------------------------------'
   fi
 }
 
