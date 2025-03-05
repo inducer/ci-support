@@ -288,7 +288,7 @@ handle_extra_install()
 
 pip_install_project()
 {
-  with_output_group "pip install" pip_install_project_inner
+  with_output_group "pip install project" pip_install_project_inner
 }
 
 pip_install_project_inner()
