@@ -56,6 +56,40 @@ if [[ "$GITLAB_CI" = "true" ]] &&  [[ "$CI_DISPOSABLE_ENVIRONMENT" = "true" ]]; 
 fi
 
 
+begin_output_group()
+{
+  if [[ $GITHUB_ACTIONS == "true" ]]; then
+    echo "::group::$1"
+  else
+    echo "--------------------------------------------------------------"
+    echo "BEGIN $1"
+    echo "--------------------------------------------------------------"
+  fi
+}
+
+
+end_output_group()
+{
+  if [[ $GITHUB_ACTIONS == "true" ]]; then
+    echo "::endgroup::$1"
+  else
+    echo "--------------------------------------------------------------"
+    echo "END $1"
+    echo "--------------------------------------------------------------"
+  fi
+}
+
+
+with_output_group()
+{
+  local groupname="$1"
+  shift
+  begin_output_group "$groupname"
+  trap end_output_group "$groupname" RETURN
+  "$@"
+}
+
+
 rewrite_pyopencl_test()
 {
   if (cd ..; $PY_EXE -c 'import pyopencl as cl; import pyopencl.characterize as c; v = [c.get_pocl_version(p) for p in cl.get_platforms()]; v, = [i for i in v if i];  import sys; sys.exit(not v >= (4,0))'); then
@@ -240,9 +274,14 @@ handle_extra_install()
   fi
 }
 
-
 pip_install_project()
 {
+  with_output_group "pip install" pip_install_project_inner
+}
+
+pip_install_project_inner()
+{
+  begin_output_group "pip install"
   with_echo pip install hatchling
 
   handle_extra_install
@@ -341,6 +380,11 @@ build_py_project_in_venv()
 # {{{ miniconda build
 
 install_conda_deps()
+{
+  with_output_group "conda install" install_conda_deps_inner
+}
+
+install_conda_deps_inner()
 {
   print_status_message
   clean_up_repo_and_working_env
