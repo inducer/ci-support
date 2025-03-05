@@ -218,7 +218,7 @@ print_status_message()
 }
 
 
-cipip
+cipip()
 {
   with_output_group "pip $*" "$PY_EXE" -m pip "$@"
 }
