@@ -56,21 +56,24 @@ if [[ "$GITLAB_CI" = "true" ]] &&  [[ "$CI_DISPOSABLE_ENVIRONMENT" = "true" ]]; 
 fi
 
 
+GROUP_NEST_LEVEL=0
 begin_output_group()
 {
-  if [[ $GITHUB_ACTIONS == "true" ]]; then
+  if [[ $GITHUB_ACTIONS == "true" ]] && [[ $GROUP_NEST_LEVEL == 0 ]]; then
     echo "::group::$1"
   else
     echo "--------------------------------------------------------------"
     echo "BEGIN $1"
     echo "--------------------------------------------------------------"
   fi
+  GROUP_NEST_LEVEL=$((GROUP_NEST_LEVEL + 1))
 }
 
 
 end_output_group()
 {
-  if [[ $GITHUB_ACTIONS == "true" ]]; then
+  GROUP_NEST_LEVEL=$((GROUP_NEST_LEVEL - 1))
+  if [[ $GITHUB_ACTIONS == "true" ]] && [[ $GROUP_NEST_LEVEL == 0 ]]; then
     echo "::endgroup::$1"
   else
     echo "--------------------------------------------------------------"
