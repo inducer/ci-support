@@ -218,6 +218,12 @@ print_status_message()
 }
 
 
+cipip
+{
+  with_output_group "pip $*" "$PY_EXE" -m pip "$@"
+}
+
+
 create_and_set_up_virtualenv()
 {
   with_output_group "virtualenv" create_and_set_up_virtualenv_inner
@@ -242,8 +248,8 @@ create_and_set_up_virtualenv_inner()
   esac
 
 
-  $PY_EXE -m pip install --upgrade pip
-  $PY_EXE -m pip install setuptools wheel toml
+  cipip install --upgrade pip
+  cipip install setuptools wheel toml
 }
 
 
@@ -275,7 +281,7 @@ handle_extra_install()
 {
   if test "$EXTRA_INSTALL" != ""; then
     for i in $EXTRA_INSTALL ; do
-      with_echo "$PY_EXE" -m pip install "$i"
+      cipip install "$i"
     done
   fi
 }
@@ -329,7 +335,7 @@ pip_install_project_inner()
     fi
   fi
 
-  with_echo "$PY_EXE" -m pip install -v $PROJECT_INSTALL_FLAGS .
+  cipip install -v $PROJECT_INSTALL_FLAGS .
 }
 
 
@@ -502,7 +508,7 @@ test_py_project()
     return
   fi
 
-  $PY_EXE -m pip install pytest pytest-github-actions-annotate-failures
+  cipip install pytest pytest-github-actions-annotate-failures
 
   # Needed for https://github.com/utgwkk/pytest-github-actions-annotate-failures
   export PYTEST_RUN_PATH=test
@@ -512,7 +518,7 @@ test_py_project()
   if [[ "${PY_EXE}" == pypy* ]]; then
     CISUPPORT_PARALLEL_PYTEST=no
   else
-    $PY_EXE -m pip install pytest-xdist
+    cipip install pytest-xdist
   fi
 
   AK_PROJ_NAME="$(get_proj_name)"
@@ -676,9 +682,9 @@ build_docs()
   # Two separate installs to trick sphinx into not precisely enforcing dependencies.
   # At the time of this writing, furo says it only works with sphinx 3.x.
   # (but it seems 4.x is OK!) -AK, 2021-05-20
-  with_echo $PY_EXE -m pip install furo sphinx-copybutton
+  cipip install furo sphinx-copybutton
 
-  with_echo $PY_EXE -m pip install "sphinx$CI_SUPPORT_SPHINX_VERSION_SPECIFIER" \
+  cipip install "sphinx$CI_SUPPORT_SPHINX_VERSION_SPECIFIER"
 
   if test "$1" = "--no-check"; then
     (cd doc; with_echo make html)
@@ -778,7 +784,7 @@ install_and_run_flake8()
     echo "-----------------------------------------------------------------"
   fi
 
-  ${PY_EXE} -m pip install "${FLAKE8_PACKAGES[@]}"
+  cipip install "${FLAKE8_PACKAGES[@]}"
   ${PY_EXE} -m flake8 "$@"
 }
 
@@ -795,7 +801,7 @@ run_pylint()
     curl -o .pylintrc.yml "${ci_support}/.pylintrc-default.yml"
   fi
 
-  $PY_EXE -m pip install pylint PyYAML pytest
+  cipip install pylint PyYAML pytest
 
   PYLINT_RUNNER_ARGS="--jobs=4 --yaml-rcfile=.pylintrc.yml"
 
@@ -813,7 +819,7 @@ run_pylint()
 
 function setup_asv
 {
-  pip install asv
+  cipip install asv
 
   if [[ ! -f ~/.asv-machine.json ]]; then
     asv machine --yes
