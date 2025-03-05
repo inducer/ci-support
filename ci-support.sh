@@ -85,7 +85,7 @@ with_output_group()
   local groupname="$1"
   shift
   begin_output_group "$groupname"
-  trap end_output_group "$groupname" RETURN
+  trap "end_output_group $groupname" RETURN
   "$@"
 }
 
