@@ -57,14 +57,14 @@ fi
 
 
 GROUP_NEST_LEVEL=0
+
 begin_output_group()
 {
   if [[ $GITHUB_ACTIONS == "true" ]] && [[ $GROUP_NEST_LEVEL == 0 ]]; then
     echo "::group::$1"
   else
-    echo "--------------------------------------------------------------"
+    echo "//------------------------------------------------------------"
     echo "BEGIN $1"
-    echo "--------------------------------------------------------------"
   fi
   GROUP_NEST_LEVEL=$((GROUP_NEST_LEVEL + 1))
 }
@@ -76,9 +76,8 @@ end_output_group()
   if [[ $GITHUB_ACTIONS == "true" ]] && [[ $GROUP_NEST_LEVEL == 0 ]]; then
     echo "::endgroup::$1"
   else
-    echo "--------------------------------------------------------------"
     echo "END $1"
-    echo "--------------------------------------------------------------"
+    echo "\\------------------------------------------------------------"
   fi
 }
 
@@ -88,8 +87,8 @@ with_output_group()
   local groupname="$1"
   shift
   begin_output_group "$groupname"
-  trap "end_output_group $groupname" RETURN
   "$@"
+  end_output_group "$groupname"
 }
 
 
@@ -97,7 +96,7 @@ rewrite_pyopencl_test()
 {
   if (cd ..; $PY_EXE -c 'import pyopencl as cl; import pyopencl.characterize as c; v = [c.get_pocl_version(p) for p in cl.get_platforms()]; v, = [i for i in v if i];  import sys; sys.exit(not v >= (4,0))'); then
     export PYOPENCL_TEST
-    PYOPENCL_TEST="$(echo "${PYOPENCL_TEST}" | sed s/pthread/cpu/ )"
+    PYOPENCL_TEST="${PYOPENCL_TEST//pthread/cpu}"
   fi
 }
 
