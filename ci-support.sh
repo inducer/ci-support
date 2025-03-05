@@ -220,6 +220,12 @@ print_status_message()
 
 create_and_set_up_virtualenv()
 {
+  with_output_group "virtualenv" create_and_set_up_virtualenv_inner
+}
+
+
+create_and_set_up_virtualenv_inner()
+{
   ${PY_EXE} -m venv .env
   . .env/bin/activate
 
