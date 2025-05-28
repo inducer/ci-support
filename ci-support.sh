@@ -1013,7 +1013,7 @@ function prepare_downstream_build()
   edit_requirements_txt_for_downstream_in_subdir
 
   # Avoid slow or complicated tests in downstream projects
-  export PYTEST_ADDOPTS="-k 'not (slowtest or octave or mpi)'"
+  export PYTEST_ADDOPTS+=" -k 'not (slowtest or octave or mpi)'"
 
   if [[ "$proj_name" = "mirgecom" ]]; then
       # can't turn off MPI in mirgecom
