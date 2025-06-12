@@ -610,7 +610,7 @@ test_py_project()
       --durations=10 \
       --junitxml=pytest.xml \
       $DOCTEST_MODULES_FLAG \
-      -rxsw -o xfail_strict=True \
+      -r wxsfE -o xfail_strict=True \
       $PYTEST_FLAGS $PYTEST_PARALLEL_FLAGS $TESTABLES )
 }
 
