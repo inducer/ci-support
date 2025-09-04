@@ -6,7 +6,7 @@ import re
 
 
 vcs_url_re = re.compile(
-        r"(git\+[a-z]+://[-a-zA-Z0-9./]+)"
+        r"(git\+[a-z]+://[-_a-zA-Z0-9./]+)"
         "((?:@[-_a-zA-Z0-9]+)?)"
         r"\#egg=([-a-zA-Z0-9_.]+)"
         )
