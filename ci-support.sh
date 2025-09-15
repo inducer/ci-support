@@ -596,8 +596,6 @@ test_py_project()
     if [ -z "$NO_DOCTESTS" ]; then
       RST_FILES=(doc/*.rst)
 
-      PYTEST_FLAGS="--ignore=doc/conf.py $PYTEST_FLAGS"
-
       for f in "${RST_FILES[@]}"; do
         if [ -e "$f" ]; then
           if ! grep -q no-doctest "$f"; then
