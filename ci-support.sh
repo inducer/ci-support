@@ -363,7 +363,7 @@ clean_up_repo_and_working_env()
     $GIT_CLEAN_EXCLUDE
 
 
-  if test `find "siteconf.py" -mmin +1`; then
+  if test "$(find "siteconf.py" -mmin +1)"; then
     echo "siteconf.py older than a minute, assumed stale, deleted"
     rm -f siteconf.py
   fi
