@@ -1072,7 +1072,7 @@ function test_downstream()
   # Downstream CI for pytools must override pytools that's installed via conda
   # (because it comes in as a dependency of, e.g., pyopencl). Try harder to
   # get rid of it.
-  pip uninstall -y "$(get_proj_name)"
+  cipip uninstall -y "$(get_proj_name)"
 
   pip_install_project
 
