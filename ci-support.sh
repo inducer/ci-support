@@ -197,7 +197,9 @@ function with_echo()
 
 function get_proj_name()
 {
-  if [ -n "$CI_PROJECT_NAME" ]; then
+  if [ -n "$AK_PROJ_NAME" ]; then
+    echo "$AK_PROJ_NAME"
+  elif [ -n "$CI_PROJECT_NAME" ]; then
     echo "$CI_PROJECT_NAME"
   else
     basename "$GITHUB_REPOSITORY"
