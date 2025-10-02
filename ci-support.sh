@@ -266,7 +266,6 @@ install_miniforge()
   else
     FORGE_INSTALLER_EXT="sh"
   fi
-  # Miniforge3 comes with mamba and conda-libmamba-solver installed by default now
   FORGE_INSTALLER="Miniforge3-$PLATFORM-$(uname -m).$FORGE_INSTALLER_EXT"
   curl -L -O "https://github.com/conda-forge/miniforge/releases/latest/download/$FORGE_INSTALLER"
 
@@ -420,7 +419,6 @@ install_conda_deps_inner()
     CONDA_EXE_DIR=$CONDA_INSTALL_DIR/bin
   fi
 
-  PATH="$CONDA_EXE_DIR:$PATH" with_echo conda config --set solver libmamba
   PATH="$CONDA_EXE_DIR:$PATH" with_echo conda update conda --yes --quiet
   PATH="$CONDA_EXE_DIR:$PATH" with_echo conda update --all --yes --quiet
   PATH="$CONDA_EXE_DIR:$PATH" with_echo conda env create --file "$CONDA_ENVIRONMENT" --name testing --quiet
