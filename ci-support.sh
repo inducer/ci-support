@@ -82,6 +82,12 @@ end_output_group()
 }
 
 
+basedpyright()
+{
+  python -m basedpyright --baselinemode=auto "$@"
+}
+
+
 with_output_group()
 {
   local groupname="$1"
