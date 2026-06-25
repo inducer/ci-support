@@ -448,15 +448,6 @@ EOF
   # '|| true' to avoid failing if pip is already installed.
   # (need observed with boxtree 2023-03-03 -AK)
   with_echo conda install --quiet --yes pip || true
-
-  # FIXME: workaround until we address
-  # https://github.com/conda-forge/pocl-feedstock/pull/96
-  if [ $PLATFORM = "MacOSX" ]; then
-    if conda list | grep -q ld64; then
-      with_echo conda install --yes ld64=609
-    fi
-  fi
-
   with_echo conda list
 
   # Placeholder until github.com/conda-forge/qt-feedstock/issues/208 is fixed
