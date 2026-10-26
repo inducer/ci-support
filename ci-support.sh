@@ -26,6 +26,11 @@ else
   CI_SUPPORT_IS_CONTAINER=0
 fi
 
+# work around OMPI detecting UCX networking on Github/Azure, trying to use it,
+# and failing
+export OMPI_MCA_pml=ob1
+export OMPI_MCA_btl=self,tcp
+
 if [[ $CI_SUPPORT_IS_CONTAINER = 0 ]] && [[ $CI == "true" ]]; then
   # clean up the mess that someone may have made
   rm -f "$HOME/.aksetup-defaults.py"
