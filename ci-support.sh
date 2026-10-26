@@ -433,6 +433,15 @@ channels:
 EOF
   PATH="$CONDA_EXE_DIR:$PATH" with_echo conda update conda --yes --quiet
   PATH="$CONDA_EXE_DIR:$PATH" with_echo conda update --all --yes --quiet
+
+  if [ "$PLATFORM" = "Windows" ]; then
+    # attempted workaround for issue observed in PyOpenCL build:
+    # FileNotFoundError: Could not find 'share/conda-launchers/cli-64.exe'
+    # in the conda-launchers package. Install conda-launchers with support for 'win-64'.
+    PATH="$CONDA_EXE_DIR:$PATH" with_echo conda install \
+      --name base --channel conda-forge --yes --force-reinstall conda-launchers
+  fi
+
   PATH="$CONDA_EXE_DIR:$PATH" with_echo conda env create --file "$CONDA_ENVIRONMENT" --name testing --quiet
 
   source "$CONDA_EXE_DIR/activate" testing
