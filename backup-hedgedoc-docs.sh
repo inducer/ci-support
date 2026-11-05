@@ -3,7 +3,7 @@
 set -eo pipefail
 
 git clone https://gitlab.tiker.net/inducer/hedgedoc-cli.git hedgedoc-cli
-CLICMD=$(pwd)/hedgedoc-cli/bin/codimd
+CLICMD=$(pwd)/hedgedoc-cli/bin/hedgedoc
 
 git clone "$CI_REPOSITORY_URL" hedgedoc-backup-subrepo
 cd hedgedoc-backup-subrepo
