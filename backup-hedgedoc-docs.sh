@@ -17,7 +17,7 @@ if (( SECONDS_SINCE_LAST_COMMIT < 10*60 )); then
 fi
 
 # Do not change this env var name! The CLI expects it to be this and nothing else
-export CODIMD_SERVER='https://notes.tiker.net'
+export HEDGEDOC_SERVER='https://notes.tiker.net'
 $CLICMD login --email inform+codibackup@tiker.net "$CODIMD_PASSWORD"
 
 BACKUP_DOC_LIST=.hedgedoc-backup.txt
@@ -35,7 +35,7 @@ until $DONE; do
         {
                 echo "**DO NOT EDIT**"
                 echo "This file will be automatically overwritten. "
-                echo "Instead, edit the file at ${CODIMD_SERVER}/${DOCID} "
+                echo "Instead, edit the file at ${HEDGEDOC_SERVER}/${DOCID} "
                 echo "**DO NOT EDIT**"
                 echo ""
                 $CLICMD export --md "$DOCID" "-"
