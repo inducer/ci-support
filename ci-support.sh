@@ -26,9 +26,11 @@ else
   CI_SUPPORT_IS_CONTAINER=0
 fi
 
-# work around OMPI detecting UCX networking on Github/Azure, trying to use it,
-# and failing
+# NOTE: workaround GitHub trying to use UCX transports that fail
 export UCX_TLS=self,sm,tcp
+# NOTE: workaround GitHub trying to use OpenMPI transports that fail (e.g. `cm`)
+# https://github.com/inducer/boxtree/pull/133
+export OMPI_MCA_pml=ob1
 
 if [[ $CI_SUPPORT_IS_CONTAINER = 0 ]] && [[ $CI == "true" ]]; then
   # clean up the mess that someone may have made
